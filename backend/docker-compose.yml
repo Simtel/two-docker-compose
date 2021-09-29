@@ -1,0 +1,26 @@
+version: '3'
+services:
+  back-dev-nginx:
+    container_name: back-dev-nginx
+    build: images/nginx
+    command: nginx -g "daemon off;"
+    links:
+      - back-dev-php
+    ports:
+      - "8081:80"
+    volumes:
+      - ./src:/var/www/html
+  back-dev-php:
+    container_name: back-dev-php
+    build: images/php
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    command: php-fpm
+    ports:
+      - "9000:9000"
+
+networks:
+  default:
+    external:
+      name: dev-network

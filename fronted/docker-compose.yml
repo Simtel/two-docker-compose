@@ -1,0 +1,37 @@
+version: '3'
+services:
+
+  front-dev-nginx:
+    container_name: front-dev-nginx
+    build:
+      context: ./images
+      dockerfile: nginx.docker
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - front-dev-php-fpm
+    ports:
+      - 80:80
+
+
+  front-dev-php-fpm:
+    container_name: front-dev-php-fpm
+    build:
+      context: ./images
+      dockerfile: php-fpm.docker
+    volumes:
+      - ./:/var/www
+      - ./src:/var/www/html
+      - ~/.bash_history:/home/docker-user/.bash_history
+    environment:
+      XDEBUG_CONFIG: "remote_host=192.168.225.1 remote_enable=1"
+      PHP_IDE_CONFIG: "serverName=Docker"
+
+    extra_hosts:
+      - 'front-dev.loc:192.168.225.1'
+
+
+networks:
+  default:
+    external:
+      name: dev-network
